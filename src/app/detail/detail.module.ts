@@ -7,7 +7,8 @@ import { DetailComponent } from './detail.component';
 import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
-  declarations: [DetailComponent],
-  imports: [CommonModule, SharedModule, DetailRoutingModule]
+    declarations: [DetailComponent],
+    imports: [CommonModule, SharedModule, DetailRoutingModule]
 })
-export class DetailModule {}
+export class DetailModule {
+}
