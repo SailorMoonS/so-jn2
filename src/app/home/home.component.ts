@@ -1,5 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, HostListener, OnInit } from '@angular/core';
 
 @Component({
     selector: 'app-home',
@@ -7,11 +6,33 @@ import { Router } from '@angular/router';
     styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
+    dragging = false;
 
-    constructor(private router: Router) {
+    constructor() {
     }
 
     ngOnInit(): void {
+    }
+
+    @HostListener('drop', ['$event'])
+    onDrop(e: DragEvent) {
+        e.preventDefault();
+        const files = e.dataTransfer.files;
+
+        if (files && files.length > 0) {
+            const path = files[0].path;
+            console.log('path:', path);
+            // const content = fs.readFileSync(path);
+            // console.log(content.toString());
+
+        }
+        this.dragging = false;
+    }
+
+    @HostListener('dragover', ['$event'])
+    onDragover(e: DragEvent) {
+        e.preventDefault();
+        this.dragging = true;
     }
 
 }
