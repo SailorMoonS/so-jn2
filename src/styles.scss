@@ -1,49 +1,43 @@
-/* You can add global styles to this file, and also import other style files */
+
 html, body {
+    height: 100%;
+}
+
+body {
     margin: 0;
-    padding: 0;
-
-    height: 100%;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
-/* CAN (MUST) BE REMOVED ! Sample Global style */
-.container {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+// Custom Theming for Angular Material
+// For more information: https://material.angular.io/guide/theming
+@import '~@angular/material/theming';
+// Plus imports for other components in your app.
 
-    background: url(./assets/background.jpg) no-repeat center fixed;
-    -webkit-background-size: cover; /* pour anciens Chrome et Safari */
-    background-size: cover; /* version standardisée */
+// Include the common styles for Angular Material. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+// Be sure that you only ever include this mixin once!
+@include mat-core();
 
-    .title {
-        color: white;
-        margin: 0;
-        padding: 50px 20px;
-    }
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// hue. Available color palettes: https://material.io/design/color/
+$angular-material-playground-primary: mat-palette($mat-indigo);
+$angular-material-playground-accent: mat-palette($mat-pink, A200, A100, A400);
 
-    a {
-        color: #fff !important;
-        text-transform: uppercase;
-        text-decoration: none;
-        background: #ed3330;
-        padding: 20px;
-        border-radius: 5px;
-        display: inline-block;
-        border: none;
-        transition: all 0.4s ease 0s;
+// The warn palette is optional (defaults to red).
+$angular-material-playground-warn: mat-palette($mat-red);
 
-        &:hover {
-            background: #fff;
-            color: #ed3330 !important;
-            letter-spacing: 1px;
-            -webkit-box-shadow: 0px 5px 40px -10px rgba(0, 0, 0, 0.57);
-            -moz-box-shadow: 0px 5px 40px -10px rgba(0, 0, 0, 0.57);
-            box-shadow: 5px 40px -10px rgba(0, 0, 0, 0.57);
-            transition: all 0.4s ease 0s;
-        }
-    }
-}
+// Create the theme object. A theme consists of configurations for individual
+// theming systems such as "color" or "typography".
+$angular-material-playground-theme: mat-light-theme((
+    color: (
+        primary: $angular-material-playground-primary,
+        accent: $angular-material-playground-accent,
+        warn: $angular-material-playground-warn,
+    )
+));
+
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+@include angular-material-theme($angular-material-playground-theme);

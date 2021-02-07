@@ -1,13 +1,22 @@
 :host {
-
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    height: 100vh;
 }
 
-.overlay {
-    position: absolute;
-    top: 200px;
-    left: 200px;
-    z-index: 999;
-    width: 200px;
-    height: 200px;
-    background: red;
+.source-panel,
+.target-panel {
+    width: 50%;
 }
+
+.target-panel {
+    display: flex;
+    flex-direction: column;
+}
+
+.preparation-directory {
+    width: 80%;
+}
+
+

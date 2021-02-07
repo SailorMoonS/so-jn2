@@ -1,8 +1,7 @@
-<div class="container">
-    <h1 class="title">
-        {{ 'PAGES.HOME.TITLE' | translate }}
-    </h1>
-
-    <a routerLink="/detail">{{ 'PAGES.HOME.GO_TO_DETAIL' | translate }}</a>
+<div class="source-panel">
+    <app-translation-source></app-translation-source>
 </div>
-<div class="overlay" [hidden]="!dragging"></div>
+<div class="target-panel">
+    <app-target></app-target>
+    <app-console></app-console>
+</div>

@@ -1,4 +1,6 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import { DropZoneService } from '../drop-zone/drop-zone.service';
 
 @Component({
     selector: 'app-home',
@@ -6,33 +8,23 @@ import { Component, HostListener, OnInit } from '@angular/core';
     styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
-    dragging = false;
+    @ViewChild('PreparationDirectory') elementPreparationDirectory;
+    testItems: string[] = ['test1', 'test2', 'test3'];
+    selection: FormControl = new FormControl();
+    controlPreparationDirectoryPath: FormControl = new FormControl();
 
-    constructor() {
+    constructor(
+        private dropZoneService: DropZoneService
+    ) {
     }
 
     ngOnInit(): void {
+        this.selection.valueChanges.subscribe(console.log);
     }
 
-    @HostListener('drop', ['$event'])
-    onDrop(e: DragEvent) {
+    @HostListener('dragenter', ['$event'])
+    onDragenter(e: DragEvent): void {
         e.preventDefault();
-        const files = e.dataTransfer.files;
-
-        if (files && files.length > 0) {
-            const path = files[0].path;
-            console.log('path:', path);
-            // const content = fs.readFileSync(path);
-            // console.log(content.toString());
-
-        }
-        this.dragging = false;
+        this.dropZoneService.openDropZone();
     }
-
-    @HostListener('dragover', ['$event'])
-    onDragover(e: DragEvent) {
-        e.preventDefault();
-        this.dragging = true;
-    }
-
 }
