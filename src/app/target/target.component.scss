@@ -1,0 +1,18 @@
+:host {
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: column;
+}
+
+.destination-directory-wrap {
+    flex: 0 0 auto;
+    padding: 10px 15px;
+
+    .mat-form-field {
+        width: 100%;
+    }
+
+    ::ng-deep .mat-form-field-wrapper {
+        padding-bottom: 0;
+    }
+}

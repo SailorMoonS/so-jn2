@@ -1,0 +1,12 @@
+<div class="destination-directory-wrap">
+    <mat-form-field appearance="outline" class="destination-directory">
+        <input #DestinationDirectory (change)="onDestinationDirectoryChange()" hidden
+               id="destination-directory"
+               type="file">
+        <mat-label>Enter directory path</mat-label>
+        <input [formControl]="controlDestinationDirectoryPath" matInput type="text">
+        <button (click)="DestinationDirectory.click()" mat-icon-button matSuffix>
+            <mat-icon>folder_open</mat-icon>
+        </button>
+    </mat-form-field>
+</div>
