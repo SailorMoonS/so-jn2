@@ -1,26 +1,23 @@
+//@import '~@angular/material/theming';
+
 :host {
     display: flex;
     height: 100%;
     flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
-.preparation-directory-wrap {
-    flex: 0 0 auto;
-    padding: 10px 15px;
-
-    .mat-form-field {
-        width: 100%;
-    }
-
-    ::ng-deep .mat-form-field-wrapper {
-        padding-bottom: 0;
-    }
+.preparation-directory {
+    margin-top: 38%;
+    width: 460px;
+    //&.ng-invalid {
+    //    mat-icon {
+    //        color: mat-color($primary);
+    //    }
+    //}
 }
 
-.files-wrap {
-    flex: 0 0 auto;
-}
-
-.nodes-wrap {
-    flex: 1 1 auto;
+.control-wrap {
+    margin-top: 20px;
 }

@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { DropZoneService } from '../drop-zone/drop-zone.service';
-import { filter, mapTo, mergeMap, partition, pluck, switchMap } from 'rxjs/operators';
+import { filter, mergeMap, pluck } from 'rxjs/operators';
 import { PathService } from '../core/services/path/path.service';
 import { IsPathExistValidator } from '../services/is-path-exist.validator';
 
@@ -44,8 +44,7 @@ export class TranslationSourceComponent implements OnInit {
         // });
         const parts = this.dropZoneService.pathSubject
             .pipe(
-                filter(res => res && res.target === 'source'),
-                pluck('path'),
+                filter(res => !!res),
                 mergeMap(path => this.pathService.isDir(path))
             );
         parts.subscribe(console.log);
@@ -53,10 +52,11 @@ export class TranslationSourceComponent implements OnInit {
         // parts[1].subscribe(console.log);
     }
 
-    onPreparationDirectoryChange(): void {
-        console.log(this.elementPreparationDirectory.nativeElement.path);
-        // const path = this.elementPreparationDirectory.nativeElement.files[0].path;
-        // this.controlPreparationDirectoryPath.setValue(path);
+    onPreparationDirectoryChange(e): void {
+        console.log(e);
+        console.log(this.elementPreparationDirectory.nativeElement);
+        const path = this.elementPreparationDirectory.nativeElement.files[0].path;
+        this.controlPreparationDirectoryPath.setValue(path, {emitEvent: false, onlySelf: true});
     }
 
     getErrorMessage(): string {

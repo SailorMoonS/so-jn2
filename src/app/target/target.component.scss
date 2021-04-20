@@ -2,17 +2,20 @@
     display: flex;
     flex: 0 0 auto;
     flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
-.destination-directory-wrap {
-    flex: 0 0 auto;
-    padding: 10px 15px;
+.destination-directory {
+    margin-top: 38%;
+    width: 460px;
+}
 
-    .mat-form-field {
-        width: 100%;
-    }
+.control-wrap {
+    margin-top: 20px;
 
-    ::ng-deep .mat-form-field-wrapper {
-        padding-bottom: 0;
+    .stepper-control + .stepper-control {
+        margin-left: 20px;
     }
 }
+

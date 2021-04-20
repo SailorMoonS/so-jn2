@@ -7,7 +7,7 @@ import { Subject } from 'rxjs';
     providedIn: 'root'
 })
 export class DropZoneService {
-    pathSubject: Subject<{ target: 'source' | 'target', path: string }> = new Subject<{ target: 'source' | 'target', path: string }>();
+    pathSubject: Subject<string> = new Subject();
 
     constructor(
         private dialog: MatDialog

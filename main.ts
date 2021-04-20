@@ -15,11 +15,11 @@ function createWindow(): BrowserWindow {
     win = new BrowserWindow({
         x: 0,
         y: 0,
-        width: size.width,
-        height: size.height,
+        width: 1180,
+        height: 680,
         webPreferences: {
             nodeIntegration: true,
-            allowRunningInsecureContent: (serve) ? true : false,
+            allowRunningInsecureContent: (serve),
             contextIsolation: false,  // false if you want to run 2e2 test with Spectron
             enableRemoteModule: true // true if you want to run 2e2 test  with Spectron or use remote module in renderer context (ie. Angular)
         },

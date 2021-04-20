@@ -1,6 +1,6 @@
 <div class="preparation-directory-wrap">
-    <mat-form-field appearance="outline" class="preparation-directory">
-        <input #PreparationDirectory (change)="onPreparationDirectoryChange()" webkitdirectory hidden id="preparation-directory"
+    <mat-form-field appearance="standard" class="preparation-directory">
+        <input #PreparationDirectory (change)="onPreparationDirectoryChange($event)" webkitdirectory hidden id="preparation-directory"
                type="file">
         <mat-label>Enter directory path</mat-label>
         <input [formControl]="controlPreparationDirectoryPath" matInput type="text" #PreparationPath>
@@ -11,13 +11,6 @@
     </mat-form-field>
 </div>
 
-<div class="files-wrap">
-
-</div>
-[
-<div class="nodes-wrap">
-    <mat-selection-list [formControl]="selection">
-        <mat-list-option *ngFor="let item of testItems" [checkboxPosition]="'before'"
-                         [value]="item">{{ item }}</mat-list-option>
-    </mat-selection-list>
+<div class="control-wrap">
+    <button mat-raised-button matStepperNext color="primary" class="stepper-control">Next</button>
 </div>

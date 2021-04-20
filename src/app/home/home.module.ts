@@ -9,6 +9,11 @@ import { DropZoneModule } from '../drop-zone/drop-zone.module';
 import { TranslationSourceModule } from '../translation-source/translation-source.module';
 import { TargetModule } from '../target/target.module';
 import { ConsoleModule } from '../console/console.module';
+import { MatStepperModule } from '@angular/material/stepper';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
 
 @NgModule({
     declarations: [HomeComponent],
@@ -16,6 +21,7 @@ import { ConsoleModule } from '../console/console.module';
         CommonModule,
         SharedModule,
         HomeRoutingModule,
+        MatStepperModule,
         DropZoneModule,
         TranslationSourceModule,
         TargetModule,

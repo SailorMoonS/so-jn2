@@ -29,7 +29,7 @@ export class DropZoneComponent implements OnInit {
     ngOnInit(): void {
     }
 
-    onDrop(e: DragEvent, target: 'source' | 'target'): void {
+    onDrop(e: DragEvent): void {
         e.preventDefault();
         const files = e.dataTransfer.files;
         let path;
@@ -39,7 +39,7 @@ export class DropZoneComponent implements OnInit {
             console.log('path:', path);
         }
 
-        this.dialogRef.close({target, path});
+        this.dialogRef.close(path);
     }
 
     @HostListener('document:dragover', ['$event'])
@@ -50,10 +50,11 @@ export class DropZoneComponent implements OnInit {
     @HostListener('dragleave', ['$event'])
     onDragleave(e: DragEventExtend): void {
         e.preventDefault();
-        if (e.fromElement === this.elementTranslationSource.nativeElement
-            || e.fromElement === this.elementTarget.nativeElement) {
-            return;
-        }
+        // if (e.fromElement === this.elementTranslationSource.nativeElement
+        //     || e.fromElement === this.elementTarget.nativeElement) {
+        //     return;
+        // }
         this.dialogRef.close();
     }
 }
+

@@ -1,5 +1,5 @@
 <div class="destination-directory-wrap">
-    <mat-form-field appearance="outline" class="destination-directory">
+    <mat-form-field appearance="standard" class="destination-directory">
         <input #DestinationDirectory (change)="onDestinationDirectoryChange()" hidden
                id="destination-directory"
                type="file">
@@ -9,4 +9,12 @@
             <mat-icon>folder_open</mat-icon>
         </button>
     </mat-form-field>
+</div>
+
+<div class="control-wrap">
+    <button mat-raised-button matStepperPrevious class="stepper-control">Back</button>
+<!--    <button mat-fab matStepperNext color="primary" class="stepper-control">-->
+<!--        <mat-icon>arrowRight</mat-icon>-->
+<!--    </button>-->
+    <button mat-raised-button matStepperNext color="primary" class="stepper-control">Next</button>
 </div>

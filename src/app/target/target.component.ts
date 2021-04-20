@@ -27,8 +27,7 @@ export class TargetComponent implements OnInit {
         });
         this.dropZoneService.pathSubject
             .pipe(
-                filter(res => res && res.target === 'target'),
-                pluck('path')
+                filter(res => !!res)
             )
             .subscribe(path => {
                 this.controlDestinationDirectoryPath.setValue(path);

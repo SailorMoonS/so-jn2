@@ -8,6 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { SharedModule } from '../shared/shared.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TranslationSourceComponent } from './translation-source.component';
+import { MatStepperModule } from '@angular/material/stepper';
 
 
 @NgModule({
@@ -23,7 +24,8 @@ import { TranslationSourceComponent } from './translation-source.component';
         MatFormFieldModule,
         MatIconModule,
         MatInputModule,
-        MatButtonModule
+        MatButtonModule,
+        MatStepperModule
     ]
 })
 export class TranslationSourceModule {

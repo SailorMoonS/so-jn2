@@ -1,22 +1,15 @@
-:host {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    height: 100vh;
-}
-
-.source-panel,
-.target-panel {
-    width: 50%;
-}
-
-.target-panel {
+.stepper {
     display: flex;
     flex-direction: column;
-}
+    width: 100%;
+    height: 100%;
 
-.preparation-directory {
-    width: 80%;
+    //::ng-deep .mat-horizontal-content-container {
+    //    flex: 1 1 auto;
+    //}
+    //
+    //::ng-deep .mat-horizontal-stepper-content {
+    //    height: 100%;
+    //}
 }
-
 

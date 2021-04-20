@@ -1,7 +1,19 @@
-<div class="source-panel">
-    <app-translation-source></app-translation-source>
-</div>
-<div class="target-panel">
-    <app-target></app-target>
-    <app-console></app-console>
-</div>
+<mat-horizontal-stepper linear labelPosition="bottom" #stepper class="stepper">
+    <mat-step>
+        <ng-template matStepLabel>Source Path</ng-template>
+        <app-translation-source></app-translation-source>
+    </mat-step>
+    <mat-step>
+        <ng-template matStepLabel>Target Path</ng-template>
+        <app-target></app-target>
+    </mat-step>
+    <mat-step>
+        <ng-template matStepLabel>Done</ng-template>
+        <p>You are now done.</p>
+        <div>
+            <button mat-button matStepperPrevious>Back</button>
+            <button mat-button (click)="stepper.reset()">Reset</button>
+        </div>
+        <app-console></app-console>
+    </mat-step>
+</mat-horizontal-stepper>
