@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, Validators } from '@angular/forms';
 import { filter, pluck } from 'rxjs/operators';
 import { DropZoneService } from '../drop-zone/drop-zone.service';
 import { PathService } from '../core/services/path/path.service';
@@ -22,6 +22,7 @@ export class TargetComponent implements OnInit {
 
     ngOnInit(): void {
         this.controlDestinationDirectoryPath = new FormControl(null, {
+            validators: Validators.required,
             asyncValidators: this.isPathExistValidator.isPathExistValidator(),
             updateOn: 'blur'
         });
