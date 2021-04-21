@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { DropZoneService } from '../drop-zone/drop-zone.service';
-import { filter, mergeMap, pluck } from 'rxjs/operators';
+import { filter, mergeMap } from 'rxjs/operators';
 import { PathService } from '../core/services/path/path.service';
 import { IsPathExistValidator } from '../services/is-path-exist.validator';
 
@@ -50,9 +50,7 @@ export class TranslationSourceComponent implements OnInit {
         // parts[1].subscribe(console.log);
     }
 
-    onPreparationDirectoryChange(e): void {
-        console.log(e);
-        console.log(this.elementPreparationDirectory.nativeElement);
+    onPreparationDirectoryChange(): void {
         const path = this.elementPreparationDirectory.nativeElement.files[0].path;
         this.controlPreparationDirectoryPath.setValue(path, {emitEvent: false, onlySelf: true});
     }

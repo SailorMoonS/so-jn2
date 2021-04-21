@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ElectronService } from '../electron/electron.service';
 import { PathLike, Stats } from 'fs';
-import { bindCallback, bindNodeCallback, Observable } from 'rxjs';
+import { bindNodeCallback, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 @Injectable({
@@ -14,9 +14,8 @@ export class PathService {
     ) {
     }
 
-    isExist(path: PathLike): Observable<boolean> {
-        console.log(111);
-        const fsExistsCallback = bindCallback(this.electron.fs.exists);
+    isExist(path: PathLike): Observable<void> {
+        const fsExistsCallback = bindNodeCallback(this.electron.fs.access);
         return fsExistsCallback(path);
     }
 
