@@ -1,9 +1,9 @@
 <mat-horizontal-stepper linear labelPosition="bottom" #stepper class="stepper">
-    <mat-step [stepControl]="source.controlPreparationDirectoryPath">
+    <mat-step [stepControl]="sourceControl">
         <ng-template matStepLabel>Source Path</ng-template>
         <app-translation-source #source></app-translation-source>
     </mat-step>
-    <mat-step [stepControl]="target.controlDestinationDirectoryPath">
+    <mat-step [stepControl]="targetControl">
         <ng-template matStepLabel>Target Path</ng-template>
         <app-target #target></app-target>
     </mat-step>

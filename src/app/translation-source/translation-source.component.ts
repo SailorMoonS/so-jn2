@@ -14,8 +14,6 @@ export class TranslationSourceComponent implements OnInit {
     @ViewChild('PreparationDirectory') elementPreparationDirectory;
     @ViewChild('PreparationPath') elementPreparationPath;
 
-    testItems: string[] = ['test1', 'test2', 'test3'];
-    selection: FormControl = new FormControl();
     controlPreparationDirectoryPath: FormControl;
 
     constructor(
