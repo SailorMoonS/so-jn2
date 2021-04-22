@@ -1,9 +1,10 @@
 <div class="preparation-directory-wrap">
     <mat-form-field appearance="standard" class="preparation-directory">
-        <input #PreparationDirectory (change)="onPreparationDirectoryChange()" webkitdirectory hidden id="preparation-directory"
+        <input #PreparationDirectory (change)="onPreparationDirectoryChange()" webkitdirectory
+               hidden id="preparation-directory"
                type="file">
         <mat-label>Enter directory path</mat-label>
-        <input [formControl]="controlPreparationDirectoryPath" matInput type="text" #PreparationPath>
+        <input #PreparationPath [formControl]="controlPreparationDirectoryPath" matInput type="text">
         <button (click)="PreparationDirectory.click()" mat-icon-button matSuffix>
             <mat-icon>folder_open</mat-icon>
         </button>

@@ -1,9 +1,9 @@
-import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
-import { filter, pluck } from 'rxjs/operators';
+import { filter } from 'rxjs/operators';
 import { DropZoneService } from '../drop-zone/drop-zone.service';
-import { PathService } from '../core/services/path/path.service';
 import { IsPathExistValidator } from '../services/is-path-exist.validator';
+import { BlendingPathAndRelativePath } from '../../utils/blendingPathAndRelativePath';
 
 @Component({
     selector: 'app-target',
@@ -37,6 +37,8 @@ export class TargetComponent implements OnInit {
 
     onDestinationDirectoryChange(): void {
         const path = this.elementDestinationDirectory.nativeElement.files[0].path;
-        this.controlDestinationDirectoryPath.setValue(path);
+        const relativePath =  this.elementDestinationDirectory.nativeElement.files[0].webkitRelativePath;
+        const folderPath = BlendingPathAndRelativePath(path, relativePath);
+        this.controlDestinationDirectoryPath.setValue(folderPath, {emitEvent: false, onlySelf: true});
     }
 }

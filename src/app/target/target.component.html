@@ -1,7 +1,7 @@
 <div class="destination-directory-wrap">
     <mat-form-field appearance="standard" class="destination-directory">
-        <input #DestinationDirectory (change)="onDestinationDirectoryChange()" hidden
-               id="destination-directory"
+        <input #DestinationDirectory (change)="onDestinationDirectoryChange()" webkitdirectory
+               hidden id="destination-directory"
                type="file">
         <mat-label>Enter directory path</mat-label>
         <input [formControl]="controlDestinationDirectoryPath" matInput type="text">

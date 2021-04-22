@@ -4,6 +4,8 @@ import { DropZoneService } from '../drop-zone/drop-zone.service';
 import { filter, mergeMap } from 'rxjs/operators';
 import { PathService } from '../core/services/path/path.service';
 import { IsPathExistValidator } from '../services/is-path-exist.validator';
+import { ElectronService } from '../core/services';
+import { BlendingPathAndRelativePath } from '../../utils/blendingPathAndRelativePath';
 
 @Component({
     selector: 'app-translation-source',
@@ -18,6 +20,7 @@ export class TranslationSourceComponent implements OnInit {
 
     constructor(
         private dropZoneService: DropZoneService,
+        private electron: ElectronService,
         private pathService: PathService,
         private isPathExistValidator: IsPathExistValidator
     ) {
@@ -52,7 +55,9 @@ export class TranslationSourceComponent implements OnInit {
 
     onPreparationDirectoryChange(): void {
         const path = this.elementPreparationDirectory.nativeElement.files[0].path;
-        this.controlPreparationDirectoryPath.setValue(path, {emitEvent: false, onlySelf: true});
+        const relativePath =  this.elementPreparationDirectory.nativeElement.files[0].webkitRelativePath;
+        const folderPath = BlendingPathAndRelativePath(path, relativePath);
+        this.controlPreparationDirectoryPath.setValue(folderPath, {emitEvent: false, onlySelf: true});
     }
 
     getErrorMessage(): string {
