@@ -1,9 +1,12 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, ViewChild } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
-import { filter } from 'rxjs/operators';
+import { filter, mapTo, switchMap } from 'rxjs/operators';
 import { DropZoneService } from '../drop-zone/drop-zone.service';
 import { IsPathExistValidator } from '../services/is-path-exist.validator';
 import { BlendingPathAndRelativePath } from '../../utils/blendingPathAndRelativePath';
+import { NEVER } from 'rxjs';
+import { StepperSelectionEvent } from '@angular/cdk/stepper/stepper';
+import { PathService } from '../core/services/path/path.service';
 
 @Component({
     selector: 'app-target',
@@ -14,9 +17,12 @@ export class TargetComponent implements OnInit {
     @ViewChild('DestinationDirectory') elementDestinationDirectory;
     controlDestinationDirectoryPath: FormControl;
 
+    @Input() stepSelectionChange: EventEmitter<StepperSelectionEvent>;
+
     constructor(
         private dropZoneService: DropZoneService,
-        private isPathExistValidator: IsPathExistValidator
+        private isPathExistValidator: IsPathExistValidator,
+        private pathService: PathService,
     ) {
     }
 
@@ -26,13 +32,17 @@ export class TargetComponent implements OnInit {
             asyncValidators: this.isPathExistValidator.isPathExistValidator(),
             updateOn: 'blur'
         });
-        this.dropZoneService.pathSubject
-            .pipe(
-                filter(res => !!res)
-            )
-            .subscribe(path => {
-                this.controlDestinationDirectoryPath.setValue(path);
-            });
+
+        const path$ = this.dropZoneService.pathSubject.pipe(
+            // May use a custom operator instead ? isDirPath() => () => Observable<Path-like>
+            switchMap(path => this.pathService.isDir(path).pipe(filter(result => result), mapTo(path)))
+        );
+        const drop$ = this.stepSelectionChange.pipe(
+            switchMap(selection => selection.selectedIndex === 1 ? path$ : NEVER)
+        );
+        drop$.subscribe((folderPath) => {
+            this.controlDestinationDirectoryPath.setValue(folderPath, {emitEvent: false, onlySelf: true});
+        });
     }
 
     onDestinationDirectoryChange(): void {

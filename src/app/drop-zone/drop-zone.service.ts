@@ -24,7 +24,7 @@ export class DropZoneService {
         });
 
         dialogRef.afterClosed().subscribe(res => {
-            this.pathSubject.next(res);
+            !!res && this.pathSubject.next(res);
         });
         return dialogRef;
     }

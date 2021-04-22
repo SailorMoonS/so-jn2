@@ -1,11 +1,11 @@
 <mat-horizontal-stepper linear labelPosition="bottom" #stepper class="stepper">
     <mat-step [stepControl]="sourceControl">
         <ng-template matStepLabel>Source Path</ng-template>
-        <app-translation-source #source></app-translation-source>
+        <app-translation-source #source [stepSelectionChange]="stepper.selectionChange"></app-translation-source>
     </mat-step>
     <mat-step [stepControl]="targetControl">
         <ng-template matStepLabel>Target Path</ng-template>
-        <app-target #target></app-target>
+        <app-target #target [stepSelectionChange]="stepper.selectionChange"></app-target>
     </mat-step>
     <mat-step>
         <ng-template matStepLabel>Done</ng-template>
