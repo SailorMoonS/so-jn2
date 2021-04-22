@@ -45,7 +45,7 @@ export class TranslationSourceComponent implements OnInit {
             switchMap(selection => selection.selectedIndex === 0 ? path$ : NEVER)
         );
         drop$.subscribe((folderPath) => {
-            this.controlPreparationDirectoryPath.setValue(folderPath, {emitEvent: false, onlySelf: true});
+            this.controlPreparationDirectoryPath.setValue(folderPath);
         });
     }
 

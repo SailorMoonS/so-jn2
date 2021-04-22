@@ -41,7 +41,7 @@ export class TargetComponent implements OnInit {
             switchMap(selection => selection.selectedIndex === 1 ? path$ : NEVER)
         );
         drop$.subscribe((folderPath) => {
-            this.controlDestinationDirectoryPath.setValue(folderPath, {emitEvent: false, onlySelf: true});
+            this.controlDestinationDirectoryPath.setValue(folderPath);
         });
     }
 
