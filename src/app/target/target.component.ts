@@ -41,4 +41,15 @@ export class TargetComponent implements OnInit {
         const folderPath = BlendingPathAndRelativePath(path, relativePath);
         this.controlDestinationDirectoryPath.setValue(folderPath, {emitEvent: false, onlySelf: true});
     }
+
+    getErrorMessage(): string {
+        let errorMassage;
+        if (this.controlDestinationDirectoryPath.hasError('isPathExistValidator')) {
+            errorMassage = 'This path is no longer exist. Update now.';
+        }
+        if (this.controlDestinationDirectoryPath.hasError('required')) {
+            errorMassage = 'Fill in Path.';
+        }
+        return errorMassage;
+    }
 }

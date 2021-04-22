@@ -5,7 +5,8 @@
                type="file">
         <mat-label>Enter directory path</mat-label>
         <input #PreparationPath [formControl]="controlPreparationDirectoryPath" matInput type="text">
-        <button (click)="PreparationDirectory.click()" mat-icon-button matSuffix>
+        <button (click)="PreparationDirectory.click()" mat-icon-button matSuffix
+                [color]="!controlPreparationDirectoryPath.pristine && controlPreparationDirectoryPath.invalid ? 'warn' : 'primary'">
             <mat-icon>folder_open</mat-icon>
         </button>
         <mat-error *ngIf="controlPreparationDirectoryPath.invalid">{{ getErrorMessage() }}</mat-error>

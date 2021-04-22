@@ -8,6 +8,7 @@
         <button (click)="DestinationDirectory.click()" mat-icon-button matSuffix>
             <mat-icon>folder_open</mat-icon>
         </button>
+        <mat-error *ngIf="controlDestinationDirectoryPath.invalid">{{ getErrorMessage() }}</mat-error>
     </mat-form-field>
 </div>
 
