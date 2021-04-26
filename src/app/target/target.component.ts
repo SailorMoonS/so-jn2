@@ -50,6 +50,7 @@ export class TargetComponent implements OnInit {
         const relativePath =  this.elementDestinationDirectory.nativeElement.files[0].webkitRelativePath;
         const folderPath = BlendingPathAndRelativePath(path, relativePath);
         this.controlDestinationDirectoryPath.setValue(folderPath, {emitEvent: false, onlySelf: true});
+        this.elementDestinationDirectory.nativeElement.value = '';
     }
 
     getErrorMessage(): string {

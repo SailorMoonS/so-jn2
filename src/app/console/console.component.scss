@@ -1,5 +1,21 @@
 :host {
+    display: flex;
+    flex: 1 1 auto;
+    justify-content: space-between;
+    padding: 15px;
+}
+
+.language-wrap {
+    display: block;
+    margin-right: 20px;
+    width: 300px;
+}
+
+.node-wrap {
     display: block;
     flex: 1 1 auto;
-    padding: 0 15px;
+
+    .node-table {
+        width: 100%;
+    }
 }

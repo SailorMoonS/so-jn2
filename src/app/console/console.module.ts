@@ -5,6 +5,9 @@ import { SharedModule } from '../shared/shared.module';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
+import { MatTableModule } from '@angular/material/table';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { LanguageTableModule } from '../language-table/language-table.module';
 
 
 @NgModule({
@@ -17,7 +20,10 @@ import { MatInputModule } from '@angular/material/input';
         SharedModule,
         MatFormFieldModule,
         ReactiveFormsModule,
-        MatInputModule
+        MatInputModule,
+        MatTableModule,
+        MatCheckboxModule,
+        LanguageTableModule
     ]
 })
 export class ConsoleModule {

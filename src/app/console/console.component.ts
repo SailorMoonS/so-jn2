@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
 
 @Component({
     selector: 'app-console',
@@ -7,7 +6,6 @@ import { FormControl } from '@angular/forms';
     styleUrls: ['./console.component.scss']
 })
 export class ConsoleComponent implements OnInit {
-    controlProjectName: FormControl = new FormControl('tan-vantage-experience');
 
     constructor() {
     }

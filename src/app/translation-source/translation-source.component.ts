@@ -54,6 +54,8 @@ export class TranslationSourceComponent implements OnInit {
         const relativePath =  this.elementPreparationDirectory.nativeElement.files[0].webkitRelativePath;
         const folderPath = BlendingPathAndRelativePath(path, relativePath);
         this.controlPreparationDirectoryPath.setValue(folderPath, {emitEvent: false, onlySelf: true});
+        // clear all value for next use. In case of select same folder twice.
+        this.elementPreparationDirectory.nativeElement.value = '';
     }
 
     getErrorMessage(): string {
