@@ -2,14 +2,13 @@
 
 :host {
     display: flex;
-    height: 100%;
+    flex: 1 1 auto;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 }
 
 .preparation-directory {
-    margin-top: 38%;
     width: 460px;
     //&.ng-invalid {
     //    mat-icon {

@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, ViewChild } from '@angular/core';
-import { FormControl, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, Validators } from '@angular/forms';
 import { DropZoneService } from '../drop-zone/drop-zone.service';
-import { filter, mapTo, startWith, switchMap } from 'rxjs/operators';
+import { distinctUntilChanged, filter, mapTo, startWith, switchMap } from 'rxjs/operators';
 import { PathService } from '../core/services/path/path.service';
 import { IsPathExistValidator } from '../services/is-path-exist.validator';
 import { ElectronService } from '../core/services';
@@ -47,13 +47,23 @@ export class TranslationSourceComponent implements OnInit {
         drop$.subscribe((folderPath) => {
             this.controlPreparationDirectoryPath.setValue(folderPath);
         });
+
+        // Pass the VALID path to service. Is this a good way??
+        this.controlPreparationDirectoryPath.statusChanges
+            .pipe(
+                filter(status => status === 'VALID'),
+                // switchMap(() => this.controlPreparationDirectoryPath.valueChanges)
+            )
+            .subscribe(() => {
+                console.log(this.controlPreparationDirectoryPath.value);
+            });
     }
 
     onPreparationDirectoryChange(): void {
         const path = this.elementPreparationDirectory.nativeElement.files[0].path;
         const relativePath =  this.elementPreparationDirectory.nativeElement.files[0].webkitRelativePath;
         const folderPath = BlendingPathAndRelativePath(path, relativePath);
-        this.controlPreparationDirectoryPath.setValue(folderPath, {emitEvent: false, onlySelf: true});
+        this.controlPreparationDirectoryPath.setValue(folderPath, {emitEvent: true, onlySelf: true});
         // clear all value for next use. In case of select same folder twice.
         this.elementPreparationDirectory.nativeElement.value = '';
     }
