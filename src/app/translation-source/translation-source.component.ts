@@ -50,12 +50,9 @@ export class TranslationSourceComponent implements OnInit {
 
         // Pass the VALID path to service. Is this a good way??
         this.controlPreparationDirectoryPath.statusChanges
-            .pipe(
-                filter(status => status === 'VALID'),
-                // switchMap(() => this.controlPreparationDirectoryPath.valueChanges)
-            )
+            .pipe(filter(status => status === 'VALID'))
             .subscribe(() => {
-                console.log(this.controlPreparationDirectoryPath.value);
+                this.pathService.source$.next(this.controlPreparationDirectoryPath.value);
             });
     }
 

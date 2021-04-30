@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit } from '@angular/core';
+import { StepperSelectionEvent } from '@angular/cdk/stepper/stepper';
 
 @Component({
     selector: 'app-console',
@@ -6,6 +7,7 @@ import { Component, OnInit } from '@angular/core';
     styleUrls: ['./console.component.scss']
 })
 export class ConsoleComponent implements OnInit {
+    @Input() stepSelectionChange: EventEmitter<StepperSelectionEvent>;
 
     constructor() {
     }

@@ -1,26 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
-
-export interface PeriodicElement {
-    name: string;
-    position: number;
-    weight: number;
-    symbol: string;
-}
-
-const ELEMENT_DATA: PeriodicElement[] = [
-    {position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H'},
-    {position: 2, name: 'Helium', weight: 4.0026, symbol: 'He'},
-    {position: 3, name: 'Lithium', weight: 6.941, symbol: 'Li'},
-    {position: 4, name: 'Beryllium', weight: 9.0122, symbol: 'Be'},
-    {position: 5, name: 'Boron', weight: 10.811, symbol: 'B'},
-    {position: 6, name: 'Carbon', weight: 12.0107, symbol: 'C'},
-    {position: 7, name: 'Nitrogen', weight: 14.0067, symbol: 'N'},
-    {position: 8, name: 'Oxygen', weight: 15.9994, symbol: 'O'},
-    {position: 9, name: 'Fluorine', weight: 18.9984, symbol: 'F'},
-    {position: 10, name: 'Neon', weight: 20.1797, symbol: 'Ne'},
-];
+import { StepperSelectionEvent } from '@angular/cdk/stepper/stepper';
+import { PathService } from '../core/services/path/path.service';
+import { filter, switchMap, withLatestFrom } from 'rxjs/operators';
+import { FileService } from '../core/services/file/file.service';
+import { LanguageCode } from './language-code.interface';
+import { LanguageCodeMap } from '../core/language-code.map';
 
 @Component({
     selector: 'app-language-table',
@@ -28,15 +14,34 @@ const ELEMENT_DATA: PeriodicElement[] = [
     styleUrls: ['./language-table.component.scss']
 })
 export class LanguageTableComponent implements OnInit {
+    @Input() stepSelectionChange: EventEmitter<StepperSelectionEvent>;
 
-    displayedColumns: string[] = ['select', 'position', 'name', 'weight'];
-    dataSource = new MatTableDataSource<PeriodicElement>(ELEMENT_DATA);
-    selection = new SelectionModel<PeriodicElement>(true, []);
+    displayedColumns: string[] = ['select', 'position', 'name', 'iso'];
+    dataSource: MatTableDataSource<LanguageCode> = new MatTableDataSource<LanguageCode>([]);
+    selection = new SelectionModel<LanguageCode>(true, []);
 
-    constructor() {
+    constructor(
+        private pathService: PathService,
+        private fileService: FileService
+    ) {
     }
 
     ngOnInit(): void {
+        const list$ = this.stepSelectionChange.pipe(
+            filter(step => step.selectedIndex === 2),
+            withLatestFrom(this.pathService.source$),
+            switchMap(([step, source]) => this.fileService.readDir(source))
+        );
+        list$.subscribe(files => {
+            const ll = files.reduce((previousValue, currentValue, currentIndex) => {
+                previousValue.push({position: currentIndex + 1, name: currentValue, iso: LanguageCodeMap.get(currentValue.toUpperCase()) });
+                return previousValue;
+            }, [] as LanguageCode[]);
+            this.dataSource = new MatTableDataSource<LanguageCode>(ll);
+            this.selection = new SelectionModel<LanguageCode>(true, []);
+            this.masterToggle();
+            console.log(this.dataSource.data);
+        });
     }
 
     /** Whether the number of selected elements matches the total number of rows. */
@@ -54,7 +59,7 @@ export class LanguageTableComponent implements OnInit {
     }
 
     /** The label for the checkbox on the passed row */
-    checkboxLabel(row?: PeriodicElement): string {
+    checkboxLabel(row?: LanguageCode): string {
         if (!row) {
             return `${this.isAllSelected() ? 'select' : 'deselect'} all`;
         }

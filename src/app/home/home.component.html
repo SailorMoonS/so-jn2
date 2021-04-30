@@ -9,6 +9,6 @@
     </mat-step>
     <mat-step>
         <ng-template matStepLabel>Done</ng-template>
-        <app-console></app-console>
+        <app-console [stepSelectionChange]="stepper.selectionChange"></app-console>
     </mat-step>
 </mat-horizontal-stepper>

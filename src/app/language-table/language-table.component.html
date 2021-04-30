@@ -27,14 +27,14 @@
 
     <!-- Name Column -->
     <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef> Name </th>
-        <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+        <th mat-header-cell *matHeaderCellDef class="text-center"> Lang </th>
+        <td mat-cell *matCellDef="let element" class="text-center"> {{element.name}} </td>
     </ng-container>
 
     <!-- Weight Column -->
-    <ng-container matColumnDef="weight">
-        <th mat-header-cell *matHeaderCellDef> Weight </th>
-        <td mat-cell *matCellDef="let element"> {{element.weight}} </td>
+    <ng-container matColumnDef="iso">
+        <th mat-header-cell *matHeaderCellDef class="text-center"> ISO </th>
+        <td mat-cell *matCellDef="let element" class="text-center"> {{element.iso}} </td>
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
