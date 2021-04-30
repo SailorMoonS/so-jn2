@@ -27,11 +27,13 @@ export class LanguageTableComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        const dir$ = this.stepSelectionChange.pipe(
+        const page$ = this.stepSelectionChange.pipe(
+            // 2 stand for last page.
             filter(step => step.selectedIndex === 2),
             withLatestFrom(this.pathService.source$)
         );
-        const list$ = dir$.pipe(
+        const list$ = page$.pipe(
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             switchMap(([_, source]) => this.fileService.readDir(source).pipe(
                 mergeMap(x => x),
                 reduce((previousValue, currentValue, currentIndex) => {
