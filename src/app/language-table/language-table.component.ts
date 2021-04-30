@@ -3,7 +3,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { StepperSelectionEvent } from '@angular/cdk/stepper/stepper';
 import { PathService } from '../core/services/path/path.service';
-import { filter, switchMap, withLatestFrom } from 'rxjs/operators';
+import { filter, mergeMap, reduce, switchMap, withLatestFrom } from 'rxjs/operators';
 import { FileService } from '../core/services/file/file.service';
 import { LanguageCode } from './language-code.interface';
 import { LanguageCodeMap } from '../core/language-code.map';
@@ -27,20 +27,27 @@ export class LanguageTableComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        const list$ = this.stepSelectionChange.pipe(
+        const dir$ = this.stepSelectionChange.pipe(
             filter(step => step.selectedIndex === 2),
-            withLatestFrom(this.pathService.source$),
-            switchMap(([step, source]) => this.fileService.readDir(source))
+            withLatestFrom(this.pathService.source$)
         );
-        list$.subscribe(files => {
-            const ll = files.reduce((previousValue, currentValue, currentIndex) => {
-                previousValue.push({position: currentIndex + 1, name: currentValue, iso: LanguageCodeMap.get(currentValue.toUpperCase()) });
-                return previousValue;
-            }, [] as LanguageCode[]);
-            this.dataSource = new MatTableDataSource<LanguageCode>(ll);
+        const list$ = dir$.pipe(
+            switchMap(([_, source]) => this.fileService.readDir(source).pipe(
+                mergeMap(x => x),
+                reduce((previousValue, currentValue, currentIndex) => {
+                    previousValue.push({
+                        position: currentIndex + 1,
+                        name: currentValue,
+                        iso: LanguageCodeMap.get(currentValue.toUpperCase())
+                    });
+                    return previousValue;
+                }, [] as LanguageCode[])
+            ))
+        );
+        list$.subscribe(list => {
+            this.dataSource = new MatTableDataSource<LanguageCode>(list);
             this.selection = new SelectionModel<LanguageCode>(true, []);
             this.masterToggle();
-            console.log(this.dataSource.data);
         });
     }
 
