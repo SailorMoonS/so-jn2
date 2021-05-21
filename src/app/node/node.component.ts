@@ -13,7 +13,6 @@ import {
     mergeScan,
     skipWhile,
     take,
-    tap,
     toArray,
     withLatestFrom
 } from 'rxjs/operators';
@@ -60,38 +59,33 @@ export class NodeComponent implements OnInit {
             withLatestFrom(this.pathService.source$)
         );
         page$.pipe(
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             map<[StepperSelectionEvent, string], PathWithType[]>(([_, source]) => [
                 {
                     type: 'dir',
                     path: source
                 }
             ]),
-            expand((paths: PathWithType[]) => {
-                console.log('=========>', paths);
-                return of(paths).pipe(
-                    concatAll(),
-                    mergeScan((acc, item) => {
-                        if (item.type !== 'dir') {
-                            return of(item);
-                        }
-                        return this.fileService.readDir(item.path).pipe(
-                            concatAll(),
-                            mergeMap(name => this.fileService.stat(this.electron.path.join(item.path, name)).pipe(
-                                map(stat => ({
-                                    parent: item.parent,
-                                    type: stat.isDirectory() ? 'dir' : 'file',
-                                    path: this.electron.path.join(item.path, name)
-                                }))
-                            ))
-                        );
-                    }, [] as PathWithType[]),
-                    toArray()
-                );
-            }),
-            tap(console.log),
-            skipWhile(arr => !arr.every(item => item.type !== 'dir')),
+            expand((paths: PathWithType[]) => of(paths).pipe(
+                concatAll(),
+                mergeScan((acc, item) => item.type !== 'dir'
+                    ? of(item)
+                    : this.fileService.readDir(item.path).pipe(
+                        concatAll(),
+                        mergeMap(name => this.fileService.stat(this.electron.path.join(item.path, name)).pipe(
+                            map(stat => ({
+                                parent: item.parent,
+                                type: stat.isDirectory() ? 'dir' : 'file',
+                                path: this.electron.path.join(item.path, name)
+                            }))
+                        ))
+                    ), [] as PathWithType[]
+                ),
+                toArray()
+            )),
+            skipWhile<PathWithType[]>(arr => !arr.every(item => item.type !== 'dir')),
             take(1)
-        ).subscribe(console.log);
+        ).subscribe();
     }
 
     /** Whether the number of selected elements matches the total number of rows. */
