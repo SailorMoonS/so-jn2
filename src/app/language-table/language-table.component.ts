@@ -32,6 +32,7 @@ export class LanguageTableComponent implements OnInit {
             filter(step => step.selectedIndex === 2),
             withLatestFrom(this.pathService.source$)
         );
+        // TODO: Check the dir has at least one json file
         const list$ = page$.pipe(
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             switchMap(([_, source]) => this.fileService.readDir(source).pipe(
@@ -48,7 +49,7 @@ export class LanguageTableComponent implements OnInit {
         );
         list$.subscribe(list => {
             this.dataSource = new MatTableDataSource<LanguageCode>(list);
-            this.selection = new SelectionModel<LanguageCode>(true, []);
+            // this.selection = new SelectionModel<LanguageCode>(true, []);
             this.masterToggle();
         });
     }

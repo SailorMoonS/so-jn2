@@ -23,6 +23,11 @@ export class FileService {
         return <Observable<Stats>>stat(dir);
     }
 
+    readFile(path: PathLike, options?: { encoding?: string; flag?: string; } | undefined | null): Observable<string | Buffer> {
+        const readFile = bindNodeCallback<PathLike, { encoding?: string; flag?: string; } | undefined | null, string | Buffer>(this.electron.fs.readFile);
+        return readFile(path, options);
+    }
+
     // readToFiles<T, R>(callback: (dir: string) => R): OperatorFunction<any, any> {
     //     return (source: Observable<T>) => new Observable(subscriber => {
     //         const subscription = source.subscribe({

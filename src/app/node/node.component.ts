@@ -10,9 +10,9 @@ import {
     filter,
     map,
     mergeMap,
-    mergeScan,
+    mergeScan, reduce,
     skipWhile,
-    take,
+    take, tap,
     toArray,
     withLatestFrom
 } from 'rxjs/operators';
@@ -20,12 +20,7 @@ import { PathService } from '../core/services/path/path.service';
 import { FileService } from '../core/services/file/file.service';
 import { ElectronService } from '../core/services';
 import { of } from 'rxjs';
-
-const test_data: INode[] = [
-    {position: 1, name: 'test', control: new FormControl()},
-    {position: 2, name: 'test1', control: new FormControl()},
-    {position: 3, name: 'test2', control: new FormControl()},
-];
+import { LanguageCodeMap } from '../core/language-code.map';
 
 interface PathWithType {
     parent?: string,
@@ -42,7 +37,7 @@ export class NodeComponent implements OnInit {
     @Input() stepSelectionChange: EventEmitter<StepperSelectionEvent>;
 
     displayedColumns: string[] = ['select', 'position', 'name', 'control'];
-    dataSource: MatTableDataSource<INode> = new MatTableDataSource<INode>(test_data);
+    dataSource: MatTableDataSource<INode> = new MatTableDataSource<INode>([]);
     selection = new SelectionModel<INode>(true, []);
 
     constructor(
@@ -58,7 +53,7 @@ export class NodeComponent implements OnInit {
             filter(step => step.selectedIndex === 2),
             withLatestFrom(this.pathService.source$)
         );
-        page$.pipe(
+        const files$ = page$.pipe(
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             map<[StepperSelectionEvent, string], PathWithType[]>(([_, source]) => [
                 {
@@ -72,9 +67,14 @@ export class NodeComponent implements OnInit {
                     ? of(item)
                     : this.fileService.readDir(item.path).pipe(
                         concatAll(),
+                        filter(name => {
+                            const ext = this.electron.path.extname(name);
+                            return ext === '' || ext === '.json';
+                        }),
                         mergeMap(name => this.fileService.stat(this.electron.path.join(item.path, name)).pipe(
                             map(stat => ({
-                                parent: item.parent,
+                                // TODO: locate the parent
+                                parent: LanguageCodeMap.has(name) ? name : item.parent,
                                 type: stat.isDirectory() ? 'dir' : 'file',
                                 path: this.electron.path.join(item.path, name)
                             }))
@@ -85,7 +85,30 @@ export class NodeComponent implements OnInit {
             )),
             skipWhile<PathWithType[]>(arr => !arr.every(item => item.type !== 'dir')),
             take(1)
-        ).subscribe();
+        );
+
+        const nodes$ = files$.pipe(
+            concatAll(),
+            mergeMap(file => this.fileService.readFile(file.path).pipe(
+                map(data => data[0] === 0xEF && data[1] === 0xBB && data[2] === 0xBF ? data.slice(3) : data),
+                map(data => data.toString('utf-8')),
+                map(data => data.replace(/,\n*\s*\}/g, "\n}")),
+                map(data => JSON.parse(data))
+            )),
+            reduce((acc, value) => {
+                Object.keys(value).forEach(key => {
+                    if (acc.every(item => item.name !== key)) {
+                        acc.push({position: acc.length + 1, name: key, control: new FormControl()});
+                    }
+                });
+                return acc;
+            }, [] as INode[])
+        );
+
+        nodes$.subscribe(nodes => {
+            this.dataSource = new MatTableDataSource(nodes);
+            this.masterToggle();
+        });
     }
 
     /** Whether the number of selected elements matches the total number of rows. */

@@ -31,4 +31,4 @@ export const LanguageCodeMap = new Map([
     ["TR", "tr"],
     ["UK", "uk"],
     ["UA", "uk"],
-],)
+]);
