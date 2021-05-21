@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ElectronService } from '../electron/electron.service';
-import { bindNodeCallback, Observable } from 'rxjs';
-import { PathLike } from 'fs';
+import { bindNodeCallback, Observable, OperatorFunction } from 'rxjs';
+import { PathLike, Stats } from 'fs';
 
 @Injectable({
     providedIn: 'root'
@@ -17,4 +17,34 @@ export class FileService {
         const readFile = bindNodeCallback(this.electron.fs.readdir);
         return <Observable<string[]>>readFile(dir);
     }
+
+    stat(dir: PathLike): Observable<Stats> {
+        const stat = bindNodeCallback(this.electron.fs.stat);
+        return <Observable<Stats>>stat(dir);
+    }
+
+    // readToFiles<T, R>(callback: (dir: string) => R): OperatorFunction<any, any> {
+    //     return (source: Observable<T>) => new Observable(subscriber => {
+    //         const subscription = source.subscribe({
+    //             next(value) {
+    //                 console.log(value);
+    //                 const result = callback('customValue');
+    //                 subscriber.next(result);
+    //             },
+    //             error(err) {
+    //                 subscriber.error(err);
+    //                 console.error(err);
+    //             },
+    //             complete() {
+    //                 subscriber.complete();
+    //                 console.log('complete');
+    //             }
+    //         });
+    //
+    //         return () => {
+    //             subscription.unsubscribe();
+    //             console.log('unsub');
+    //         };
+    //     });
+    // }
 }

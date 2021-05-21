@@ -6,6 +6,7 @@ import { ipcRenderer, remote, webFrame } from 'electron';
 import * as childProcess from 'child_process';
 import * as fs from 'fs';
 import * as os from 'os';
+import * as path from 'path';
 
 @Injectable({
     providedIn: 'root'
@@ -17,6 +18,7 @@ export class ElectronService {
     childProcess: typeof childProcess;
     fs: typeof fs;
     os: typeof os;
+    path: typeof path;
 
     constructor() {
         // Conditional imports
@@ -30,6 +32,7 @@ export class ElectronService {
             this.childProcess = window.require('child_process');
             this.fs = window.require('fs');
             this.os = window.require('os');
+            this.path = window.require('path');
         }
     }
 
