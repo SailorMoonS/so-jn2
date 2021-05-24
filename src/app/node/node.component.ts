@@ -67,11 +67,11 @@ export class NodeComponent implements OnInit {
                     ? of(item)
                     : this.fileService.readDir(item.path).pipe(
                         concatAll(),
-                        filter(name => {
-                            const ext = this.electron.path.extname(name);
-                            return ext === '' || ext === '.json';
-                        }),
                         mergeMap(name => this.fileService.stat(this.electron.path.join(item.path, name)).pipe(
+                            filter(stat => {
+                                const ext = this.electron.path.extname(name);
+                                return stat.isDirectory() || ext === '.json';
+                            }),
                             map(stat => ({
                                 // TODO: locate the parent
                                 parent: LanguageCodeMap.has(name) ? name : item.parent,
