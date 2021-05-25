@@ -1,7 +1,20 @@
 import { Injectable } from '@angular/core';
 import { ElectronService } from '../electron/electron.service';
-import { bindNodeCallback, Observable, OperatorFunction } from 'rxjs';
+import { bindNodeCallback, Observable, of, pipe, UnaryFunction } from 'rxjs';
 import { PathLike, Stats } from 'fs';
+import {
+    concatAll,
+    expand,
+    filter,
+    map,
+    mergeMap,
+    mergeScan,
+    skipWhile,
+    take,
+    toArray
+} from 'rxjs/operators';
+import { LanguageCodeMap } from '../../language-code.map';
+import { PathWithType } from '../../../interface/path-with-type.interface';
 
 @Injectable({
     providedIn: 'root'
@@ -28,28 +41,41 @@ export class FileService {
         return readFile(path, options);
     }
 
-    // readToFiles<T, R>(callback: (dir: string) => R): OperatorFunction<any, any> {
-    //     return (source: Observable<T>) => new Observable(subscriber => {
-    //         const subscription = source.subscribe({
-    //             next(value) {
-    //                 console.log(value);
-    //                 const result = callback('customValue');
-    //                 subscriber.next(result);
-    //             },
-    //             error(err) {
-    //                 subscriber.error(err);
-    //                 console.error(err);
-    //             },
-    //             complete() {
-    //                 subscriber.complete();
-    //                 console.log('complete');
-    //             }
-    //         });
-    //
-    //         return () => {
-    //             subscription.unsubscribe();
-    //             console.log('unsub');
-    //         };
-    //     });
-    // }
+    readToFiles(): UnaryFunction<Observable<PathWithType[]>, Observable<PathWithType[]>> {
+        return pipe(
+            expand((paths: PathWithType[]) => of(paths).pipe(
+                concatAll(),
+                mergeScan((acc, item) => item.type !== 'dir'
+                    ? of(item)
+                    : this.readDir(item.path).pipe(
+                        concatAll(),
+                        mergeMap(name => this.stat(this.electron.path.join(item.path, name)).pipe(
+                            filter(stat => {
+                                const ext = this.electron.path.extname(name);
+                                return stat.isDirectory() || ext === '.json';
+                            }),
+                            map(stat => ({
+                                // TODO: locate the parent
+                                parent: LanguageCodeMap.has(name) ? name : item.parent,
+                                type: stat.isDirectory() ? 'dir' : 'file',
+                                path: this.electron.path.join(item.path, name)
+                            }))
+                        ))
+                    ), [] as PathWithType[]
+                ),
+                toArray()
+            )),
+            skipWhile<PathWithType[]>(arr => !arr.every(item => item.type !== 'dir')),
+            take(1)
+        );
+    }
+
+    readJSON(path: PathLike): Observable<any> {
+        return this.readFile(path).pipe(
+            map(data => data[0] === 0xEF && data[1] === 0xBB && data[2] === 0xBF ? data.slice(3) : data),
+            map(data => data.toString('utf-8')),
+            map(data => data.replace(/,\n*\s*\}/g, "\n}")),
+            map(data => JSON.parse(data))
+        );
+    }
 }
