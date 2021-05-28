@@ -9,6 +9,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { LanguageTableModule } from '../language-table/language-table.module';
 import { NodeModule } from '../node/node.module';
+import { ControllerModule } from '../controller/controller.module';
 
 
 @NgModule({
@@ -25,7 +26,8 @@ import { NodeModule } from '../node/node.module';
         MatTableModule,
         MatCheckboxModule,
         LanguageTableModule,
-        NodeModule
+        NodeModule,
+        ControllerModule
     ]
 })
 export class ConsoleModule {

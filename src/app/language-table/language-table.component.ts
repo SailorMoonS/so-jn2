@@ -8,6 +8,7 @@ import { LanguageCode } from './language-code.interface';
 import { LanguageCodeMap } from '../core/language-code.map';
 import { GoService } from '../services/go.service';
 import { Subscription } from 'rxjs';
+import { LanguageTableService } from './language-table.service';
 
 @Component({
     selector: 'app-language-table',
@@ -17,17 +18,19 @@ import { Subscription } from 'rxjs';
 export class LanguageTableComponent implements OnInit, OnDestroy {
     displayedColumns: string[] = ['select', 'position', 'name', 'iso'];
     dataSource: MatTableDataSource<LanguageCode> = new MatTableDataSource<LanguageCode>([]);
-    selection = new SelectionModel<LanguageCode>(true, []);
+    selection: SelectionModel<LanguageCode>;
     private listSubscription: Subscription;
 
     constructor(
         private pathService: PathService,
         private fileService: FileService,
-        private go: GoService
+        private go: GoService,
+        private languageTableService: LanguageTableService
     ) {
     }
 
     ngOnInit(): void {
+        this.selection = this.languageTableService.selection;
         const files$ = this.go.files;
         const list$ = files$.pipe(
             concatAll(),

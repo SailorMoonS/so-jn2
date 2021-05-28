@@ -20,6 +20,9 @@ export class GoService {
     ) {
     }
 
+    /**
+     * HOT stream: unsubscribe.
+     */
     get files(): Observable<PathWithType[]> {
         if (!this.files$) {
             this.files$ = this.stepperChange.pipe(
@@ -34,7 +37,6 @@ export class GoService {
         }
         return this.files$;
     }
-
 
     forceReload(): void {
         this.reload$.next();

@@ -1,14 +1,14 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { INode } from './node.interface';
 import { FormControl, Validators } from '@angular/forms';
-import { StepperSelectionEvent } from '@angular/cdk/stepper/stepper';
 import { concatAll, mergeMap, reduce } from 'rxjs/operators';
 import { PathService } from '../core/services/path/path.service';
 import { FileService } from '../core/services/file/file.service';
 import { GoService } from '../services/go.service';
 import { Subscription } from 'rxjs';
+import { NodeService } from './node.service';
 
 @Component({
     selector: 'app-node',
@@ -16,21 +16,21 @@ import { Subscription } from 'rxjs';
     styleUrls: ['./node.component.scss']
 })
 export class NodeComponent implements OnInit, OnDestroy {
-    @Input() stepSelectionChange: EventEmitter<StepperSelectionEvent>;
-
     displayedColumns: string[] = ['select', 'position', 'name', 'control'];
     dataSource: MatTableDataSource<INode> = new MatTableDataSource<INode>([]);
-    selection = new SelectionModel<INode>(true, []);
+    selection: SelectionModel<INode>;
     private nodeSubscription: Subscription;
 
     constructor(
         private pathService: PathService,
         private fileService: FileService,
-        private go: GoService
+        private go: GoService,
+        private nodeService: NodeService
     ) {
     }
 
     ngOnInit(): void {
+        this.selection = this.nodeService.selection;
         const files$ = this.go.files;
 
         const json$ = files$.pipe(

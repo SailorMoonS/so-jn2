@@ -1,0 +1,10 @@
+:host {
+    display: block;
+    flex: 0 0 auto;
+    padding: 10px 24px;
+    text-align: right;
+}
+
+.btn + .btn {
+    margin-left: 10px;
+}
