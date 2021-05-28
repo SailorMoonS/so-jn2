@@ -1,6 +1,8 @@
 import { AfterViewInit, Component, HostListener, OnInit, ViewChild } from '@angular/core';
 import { DropZoneService } from '../drop-zone/drop-zone.service';
 import { FormControl } from '@angular/forms';
+import { StepperSelectionEvent } from '@angular/cdk/stepper/stepper';
+import { GoService } from '../services/go.service';
 
 @Component({
     selector: 'app-home',
@@ -14,7 +16,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
     targetControl: FormControl;
 
     constructor(
-        private dropZoneService: DropZoneService
+        private dropZoneService: DropZoneService,
+        private go: GoService
     ) {
     }
 
@@ -36,5 +39,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
     onDragenter(e: DragEvent): void {
         e.preventDefault();
         this.dropZoneService.openDropZone();
+    }
+
+    onChange($event: StepperSelectionEvent): void {
+        this.go.stepperChange.next($event);
     }
 }

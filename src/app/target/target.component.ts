@@ -43,13 +43,24 @@ export class TargetComponent implements OnInit {
         drop$.subscribe((folderPath) => {
             this.controlDestinationDirectoryPath.setValue(folderPath);
         });
+
+        // Pass the VALID path to service. Is this a good way??
+        this.controlDestinationDirectoryPath.statusChanges
+            .pipe(filter(status => status === 'VALID'))
+            .subscribe(() => {
+                this.pathService.target$.next(this.controlDestinationDirectoryPath.value);
+            });
     }
 
     onDestinationDirectoryChange(): void {
         const path = this.elementDestinationDirectory.nativeElement.files[0].path;
-        const relativePath =  this.elementDestinationDirectory.nativeElement.files[0].webkitRelativePath;
+        const relativePath = this.elementDestinationDirectory.nativeElement.files[0].webkitRelativePath;
         const folderPath = BlendingPathAndRelativePath(path, relativePath);
-        this.controlDestinationDirectoryPath.setValue(folderPath, {emitEvent: false, onlySelf: true});
+        this.controlDestinationDirectoryPath.setValue(folderPath, {
+            emitEvent: true,
+            onlySelf: true
+        });
+        // clear all value for next use. In case of select same folder twice.
         this.elementDestinationDirectory.nativeElement.value = '';
     }
 

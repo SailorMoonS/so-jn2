@@ -9,6 +9,7 @@ import { map } from 'rxjs/operators';
 })
 export class PathService {
     source$: BehaviorSubject<string> = new BehaviorSubject<string>(null);
+    target$: BehaviorSubject<string> = new BehaviorSubject<string>(null);
 
     constructor(
         private electron: ElectronService

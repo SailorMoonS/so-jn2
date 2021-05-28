@@ -1,49 +1,37 @@
-import { Component, EventEmitter, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { INode } from './node.interface';
 import { FormControl, Validators } from '@angular/forms';
 import { StepperSelectionEvent } from '@angular/cdk/stepper/stepper';
-import { concatAll, filter, map, mergeMap, reduce, withLatestFrom } from 'rxjs/operators';
+import { concatAll, mergeMap, reduce } from 'rxjs/operators';
 import { PathService } from '../core/services/path/path.service';
 import { FileService } from '../core/services/file/file.service';
-import { PathWithType } from '../interface/path-with-type.interface';
+import { GoService } from '../services/go.service';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-node',
     templateUrl: './node.component.html',
     styleUrls: ['./node.component.scss']
 })
-export class NodeComponent implements OnInit {
+export class NodeComponent implements OnInit, OnDestroy {
     @Input() stepSelectionChange: EventEmitter<StepperSelectionEvent>;
 
     displayedColumns: string[] = ['select', 'position', 'name', 'control'];
     dataSource: MatTableDataSource<INode> = new MatTableDataSource<INode>([]);
     selection = new SelectionModel<INode>(true, []);
+    private nodeSubscription: Subscription;
 
     constructor(
         private pathService: PathService,
-        private fileService: FileService
+        private fileService: FileService,
+        private go: GoService
     ) {
     }
 
     ngOnInit(): void {
-        const page$ = this.stepSelectionChange.pipe(
-            // 2 stand for last page.
-            filter(step => step.selectedIndex === 2),
-            withLatestFrom(this.pathService.source$)
-        );
-
-        const files$ = page$.pipe(
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            map<[StepperSelectionEvent, string], PathWithType[]>(([_, source]) => [
-                {
-                    type: 'dir',
-                    path: source
-                }
-            ]),
-            this.fileService.readToFiles()
-        );
+        const files$ = this.go.files;
 
         const json$ = files$.pipe(
             concatAll(),
@@ -64,10 +52,14 @@ export class NodeComponent implements OnInit {
             }, [] as INode[])
         );
 
-        nodes$.subscribe(nodes => {
+        this.nodeSubscription = nodes$.subscribe(nodes => {
             this.dataSource = new MatTableDataSource(nodes);
             this.masterToggle();
         });
+    }
+
+    ngOnDestroy(): void {
+        this.nodeSubscription.unsubscribe();
     }
 
     /** Whether the number of selected elements matches the total number of rows. */

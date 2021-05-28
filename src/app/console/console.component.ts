@@ -7,7 +7,6 @@ import { StepperSelectionEvent } from '@angular/cdk/stepper/stepper';
     styleUrls: ['./console.component.scss']
 })
 export class ConsoleComponent implements OnInit {
-    @Input() stepSelectionChange: EventEmitter<StepperSelectionEvent>;
 
     constructor() {
     }

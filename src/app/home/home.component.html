@@ -1,4 +1,4 @@
-<mat-horizontal-stepper linear labelPosition="bottom" #stepper class="stepper">
+<mat-horizontal-stepper linear labelPosition="bottom" #stepper class="stepper" (selectionChange)="onChange($event)">
     <mat-step [stepControl]="sourceControl">
         <ng-template matStepLabel>Source Path</ng-template>
         <app-translation-source #source [stepSelectionChange]="stepper.selectionChange"></app-translation-source>
@@ -9,6 +9,6 @@
     </mat-step>
     <mat-step>
         <ng-template matStepLabel>Done</ng-template>
-        <app-console [stepSelectionChange]="stepper.selectionChange"></app-console>
+        <app-console></app-console>
     </mat-step>
 </mat-horizontal-stepper>

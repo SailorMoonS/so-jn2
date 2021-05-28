@@ -1,57 +1,54 @@
-import { Component, EventEmitter, Input, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
-import { StepperSelectionEvent } from '@angular/cdk/stepper/stepper';
 import { PathService } from '../core/services/path/path.service';
-import { filter, mergeMap, reduce, switchMap, withLatestFrom } from 'rxjs/operators';
+import { concatAll, reduce } from 'rxjs/operators';
 import { FileService } from '../core/services/file/file.service';
 import { LanguageCode } from './language-code.interface';
 import { LanguageCodeMap } from '../core/language-code.map';
+import { GoService } from '../services/go.service';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-language-table',
     templateUrl: './language-table.component.html',
     styleUrls: ['./language-table.component.scss']
 })
-export class LanguageTableComponent implements OnInit {
-    @Input() stepSelectionChange: EventEmitter<StepperSelectionEvent>;
-
+export class LanguageTableComponent implements OnInit, OnDestroy {
     displayedColumns: string[] = ['select', 'position', 'name', 'iso'];
     dataSource: MatTableDataSource<LanguageCode> = new MatTableDataSource<LanguageCode>([]);
     selection = new SelectionModel<LanguageCode>(true, []);
+    private listSubscription: Subscription;
 
     constructor(
         private pathService: PathService,
-        private fileService: FileService
+        private fileService: FileService,
+        private go: GoService
     ) {
     }
 
     ngOnInit(): void {
-        const page$ = this.stepSelectionChange.pipe(
-            // 2 stand for last page.
-            filter(step => step.selectedIndex === 2),
-            withLatestFrom(this.pathService.source$)
+        const files$ = this.go.files;
+        const list$ = files$.pipe(
+            concatAll(),
+            reduce((previousValue, currentValue, currentIndex) => {
+                previousValue.push({
+                    position: currentIndex + 1,
+                    name: currentValue.parent,
+                    iso: LanguageCodeMap.get(currentValue.parent.toUpperCase())
+                });
+                return previousValue;
+            }, [] as LanguageCode[])
         );
-        // TODO: Check the dir has at least one json file
-        const list$ = page$.pipe(
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            switchMap(([_, source]) => this.fileService.readDir(source).pipe(
-                mergeMap(x => x),
-                reduce((previousValue, currentValue, currentIndex) => {
-                    previousValue.push({
-                        position: currentIndex + 1,
-                        name: currentValue,
-                        iso: LanguageCodeMap.get(currentValue.toUpperCase())
-                    });
-                    return previousValue;
-                }, [] as LanguageCode[])
-            ))
-        );
-        list$.subscribe(list => {
+        this.listSubscription = list$.subscribe(list => {
             this.dataSource = new MatTableDataSource<LanguageCode>(list);
             // this.selection = new SelectionModel<LanguageCode>(true, []);
             this.masterToggle();
         });
+    }
+
+    ngOnDestroy(): void {
+        this.listSubscription.unsubscribe();
     }
 
     /** Whether the number of selected elements matches the total number of rows. */
