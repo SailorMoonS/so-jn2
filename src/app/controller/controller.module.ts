@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControllerComponent } from './controller.component';
 import { MatButtonModule } from '@angular/material/button';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 
 @NgModule({
@@ -11,7 +12,8 @@ import { MatButtonModule } from '@angular/material/button';
     ],
     imports: [
         CommonModule,
-        MatButtonModule
+        MatButtonModule,
+        MatSnackBarModule
     ]
 })
 export class ControllerModule {

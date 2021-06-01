@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { PathService } from '../core/services/path/path.service';
-import { concatAll, reduce, skipUntil } from 'rxjs/operators';
+import { buffer, concatAll, reduce, skipUntil } from 'rxjs/operators';
 import { FileService } from '../core/services/file/file.service';
 import { LanguageCode } from './language-code.interface';
 import { LanguageCodeMap } from '../core/language-code.map';
@@ -48,9 +48,11 @@ export class LanguageTableComponent implements OnInit, OnDestroy {
             this.listInit$.next();
         });
 
-        this.selectionChangedSubscription = this.selection.changed.pipe(skipUntil(this.listInit$))
+        // TODO: buffer select all but won't fire anymore. same issue as node.component
+        this.selectionChangedSubscription = this.selection.changed.pipe(buffer(this.listInit$))
             .subscribe(() => {
-                this.go.languageSelection.next(this.selection.selected);
+                this.go.languageSelection = this.selection.selected;
+                console.log(this.go.languageSelection);
             });
     }
 

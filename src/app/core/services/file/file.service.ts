@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ElectronService } from '../electron/electron.service';
 import { bindNodeCallback, Observable, of, pipe, UnaryFunction } from 'rxjs';
-import { PathLike, Stats } from 'fs';
+import { PathLike, Stats, WriteFileOptions } from 'fs';
 import {
     concatAll,
     expand,
@@ -77,5 +77,11 @@ export class FileService {
             map(data => data.replace(/,\n*\s*\}/g, "\n}")),
             map(data => JSON.parse(data))
         );
+    }
+
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+    writeFile(path: PathLike | number, data: any, options: WriteFileOptions = {encoding: 'utf-8'}): Observable<any> {
+        const writeFile = bindNodeCallback<PathLike | number, any, WriteFileOptions>(this.electron.fs.writeFile);
+        return writeFile(path, data, options);
     }
 }
