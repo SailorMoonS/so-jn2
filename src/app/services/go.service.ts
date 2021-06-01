@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { StepperSelectionEvent } from '@angular/cdk/stepper/stepper';
 import { filter, map, share, switchMap, takeUntil } from 'rxjs/operators';
 import { PathService } from '../core/services/path/path.service';
@@ -12,6 +12,8 @@ import { PathWithType } from '../interface/path-with-type.interface';
 export class GoService {
     reload$ = new Subject();
     stepperChange: Subject<StepperSelectionEvent> = new Subject<StepperSelectionEvent>();
+    nodeSelection: BehaviorSubject<any> = new BehaviorSubject<any>([]);
+    languageSelection: BehaviorSubject<any> = new BehaviorSubject<any>([]);
     private files$: Observable<PathWithType[]>;
 
     constructor(
@@ -45,5 +47,9 @@ export class GoService {
 
     clearCache(): void {
         this.files$ = null;
+    }
+
+    transform() {
+
     }
 }

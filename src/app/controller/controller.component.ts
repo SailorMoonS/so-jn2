@@ -17,6 +17,6 @@ export class ControllerComponent implements OnInit {
     }
 
     start(): void {
-
+        this.go.transform();
     }
 }

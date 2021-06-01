@@ -2,13 +2,12 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { PathService } from '../core/services/path/path.service';
-import { concatAll, reduce } from 'rxjs/operators';
+import { concatAll, reduce, skipUntil } from 'rxjs/operators';
 import { FileService } from '../core/services/file/file.service';
 import { LanguageCode } from './language-code.interface';
 import { LanguageCodeMap } from '../core/language-code.map';
 import { GoService } from '../services/go.service';
-import { Subscription } from 'rxjs';
-import { LanguageTableService } from './language-table.service';
+import { Subject, Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-language-table',
@@ -18,19 +17,19 @@ import { LanguageTableService } from './language-table.service';
 export class LanguageTableComponent implements OnInit, OnDestroy {
     displayedColumns: string[] = ['select', 'position', 'name', 'iso'];
     dataSource: MatTableDataSource<LanguageCode> = new MatTableDataSource<LanguageCode>([]);
-    selection: SelectionModel<LanguageCode>;
+    selection: SelectionModel<LanguageCode> =  new SelectionModel<LanguageCode>(true, []);
     private listSubscription: Subscription;
+    private selectionChangedSubscription: Subscription;
+    private listInit$: Subject<null> = new Subject();
 
     constructor(
         private pathService: PathService,
         private fileService: FileService,
-        private go: GoService,
-        private languageTableService: LanguageTableService
+        private go: GoService
     ) {
     }
 
     ngOnInit(): void {
-        this.selection = this.languageTableService.selection;
         const files$ = this.go.files;
         const list$ = files$.pipe(
             concatAll(),
@@ -45,13 +44,19 @@ export class LanguageTableComponent implements OnInit, OnDestroy {
         );
         this.listSubscription = list$.subscribe(list => {
             this.dataSource = new MatTableDataSource<LanguageCode>(list);
-            // this.selection = new SelectionModel<LanguageCode>(true, []);
             this.masterToggle();
+            this.listInit$.next();
         });
+
+        this.selectionChangedSubscription = this.selection.changed.pipe(skipUntil(this.listInit$))
+            .subscribe(() => {
+                this.go.languageSelection.next(this.selection.selected);
+            });
     }
 
     ngOnDestroy(): void {
         this.listSubscription.unsubscribe();
+        this.selectionChangedSubscription.unsubscribe();
     }
 
     /** Whether the number of selected elements matches the total number of rows. */

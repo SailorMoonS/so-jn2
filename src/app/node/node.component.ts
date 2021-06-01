@@ -3,12 +3,11 @@ import { MatTableDataSource } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { INode } from './node.interface';
 import { FormControl, Validators } from '@angular/forms';
-import { concatAll, mergeMap, reduce } from 'rxjs/operators';
+import { concatAll, mergeMap, reduce, skipUntil } from 'rxjs/operators';
 import { PathService } from '../core/services/path/path.service';
 import { FileService } from '../core/services/file/file.service';
 import { GoService } from '../services/go.service';
-import { Subscription } from 'rxjs';
-import { NodeService } from './node.service';
+import { Subject, Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-node',
@@ -18,19 +17,19 @@ import { NodeService } from './node.service';
 export class NodeComponent implements OnInit, OnDestroy {
     displayedColumns: string[] = ['select', 'position', 'name', 'control'];
     dataSource: MatTableDataSource<INode> = new MatTableDataSource<INode>([]);
-    selection: SelectionModel<INode>;
+    selection: SelectionModel<INode> = new SelectionModel<INode>(true, []);
     private nodeSubscription: Subscription;
+    private selectionChangedSubscription: Subscription;
+    private nodeInit$: Subject<null> = new Subject();
 
     constructor(
         private pathService: PathService,
         private fileService: FileService,
-        private go: GoService,
-        private nodeService: NodeService
+        private go: GoService
     ) {
     }
 
     ngOnInit(): void {
-        this.selection = this.nodeService.selection;
         const files$ = this.go.files;
 
         const json$ = files$.pipe(
@@ -55,11 +54,18 @@ export class NodeComponent implements OnInit, OnDestroy {
         this.nodeSubscription = nodes$.subscribe(nodes => {
             this.dataSource = new MatTableDataSource(nodes);
             this.masterToggle();
+            this.nodeInit$.next();
         });
+
+        this.selectionChangedSubscription = this.selection.changed.pipe(skipUntil(this.nodeInit$))
+            .subscribe(() => {
+                this.go.nodeSelection.next(this.selection.selected);
+            });
     }
 
     ngOnDestroy(): void {
         this.nodeSubscription.unsubscribe();
+        this.selectionChangedSubscription.unsubscribe();
     }
 
     /** Whether the number of selected elements matches the total number of rows. */
