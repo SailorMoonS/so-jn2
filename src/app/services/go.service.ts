@@ -84,7 +84,18 @@ export class GoService {
             mergeMap(([source, target]) => zip(this.fileService.readJSON(source), this.fileService.readJSON(target)).pipe(
                 map(([sourceJSON, targetJSON]) => {
                     _.forEach(this.nodeSelection, (node: INode) => {
-                        _.updateWith(targetJSON, node.control.value, (n) => _.merge(n, sourceJSON[node.name]));
+                        _.updateWith(targetJSON, node.control.value, (n) => {
+                            const typeOfSourceJSON = Object.prototype.toString.call(sourceJSON[node.name]);
+                            const typeOfTargetJSON = Object.prototype.toString.call(n);
+                            if (typeOfSourceJSON !== typeOfTargetJSON
+                                || typeOfTargetJSON !== '[object Object]'
+                                || typeOfTargetJSON !== '[object Array]'
+                                || n === null
+                                || sourceJSON[node.name] === null) {
+                                return sourceJSON[node.name];
+                            }
+                            return _.merge(n, sourceJSON[node.name]);
+                        });
                     });
                     return {target, targetJSON};
                 }),
