@@ -3,11 +3,11 @@ import { MatTableDataSource } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { INode } from './node.interface';
 import { FormControl, Validators } from '@angular/forms';
-import { buffer, concatAll, mergeMap, reduce, skipUntil } from 'rxjs/operators';
+import { buffer, concatAll, mergeMap, reduce, take } from 'rxjs/operators';
 import { PathService } from '../core/services/path/path.service';
 import { FileService } from '../core/services/file/file.service';
 import { GoService } from '../services/go.service';
-import { Subject, Subscription } from 'rxjs';
+import { concat, Subject, Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-node',
@@ -57,12 +57,12 @@ export class NodeComponent implements OnInit, OnDestroy {
             this.nodeInit$.next();
         });
 
-        // TODO: buffer select all but won't fire anymore.
-        this.selectionChangedSubscription = this.selection.changed.pipe(buffer(this.nodeInit$))
-            .subscribe(() => {
-                this.go.nodeSelection = this.selection.selected;
-                console.log(this.go.nodeSelection);
-            });
+        this.selectionChangedSubscription = concat(
+            this.selection.changed.pipe(buffer(this.nodeInit$), take(1)),
+            this.selection.changed
+        ).subscribe(() => {
+            this.go.nodeSelection = this.selection.selected;
+        });
     }
 
     ngOnDestroy(): void {

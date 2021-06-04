@@ -2,12 +2,12 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { PathService } from '../core/services/path/path.service';
-import { buffer, concatAll, reduce, skipUntil } from 'rxjs/operators';
+import { buffer, concatAll, reduce, take } from 'rxjs/operators';
 import { FileService } from '../core/services/file/file.service';
 import { LanguageCode } from './language-code.interface';
 import { LanguageCodeMap } from '../core/language-code.map';
 import { GoService } from '../services/go.service';
-import { Subject, Subscription } from 'rxjs';
+import { concat, Subject, Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-language-table',
@@ -17,7 +17,7 @@ import { Subject, Subscription } from 'rxjs';
 export class LanguageTableComponent implements OnInit, OnDestroy {
     displayedColumns: string[] = ['select', 'position', 'name', 'iso'];
     dataSource: MatTableDataSource<LanguageCode> = new MatTableDataSource<LanguageCode>([]);
-    selection: SelectionModel<LanguageCode> =  new SelectionModel<LanguageCode>(true, []);
+    selection: SelectionModel<LanguageCode> = new SelectionModel<LanguageCode>(true, []);
     private listSubscription: Subscription;
     private selectionChangedSubscription: Subscription;
     private listInit$: Subject<null> = new Subject();
@@ -48,12 +48,12 @@ export class LanguageTableComponent implements OnInit, OnDestroy {
             this.listInit$.next();
         });
 
-        // TODO: buffer select all but won't fire anymore. same issue as node.component
-        this.selectionChangedSubscription = this.selection.changed.pipe(buffer(this.listInit$))
-            .subscribe(() => {
-                this.go.languageSelection = this.selection.selected;
-                console.log(this.go.languageSelection);
-            });
+        this.selectionChangedSubscription = concat(
+            this.selection.changed.pipe(buffer(this.listInit$), take(1)),
+            this.selection.changed
+        ).pipe().subscribe(() => {
+            this.go.languageSelection = this.selection.selected;
+        });
     }
 
     ngOnDestroy(): void {
