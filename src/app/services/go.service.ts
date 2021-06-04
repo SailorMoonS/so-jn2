@@ -89,9 +89,7 @@ export class GoService {
                             const typeOfTargetJSON = Object.prototype.toString.call(n);
                             if (typeOfSourceJSON !== typeOfTargetJSON
                                 || typeOfTargetJSON !== '[object Object]'
-                                || typeOfTargetJSON !== '[object Array]'
-                                || n === null
-                                || sourceJSON[node.name] === null) {
+                                || typeOfTargetJSON !== '[object Array]') {
                                 return sourceJSON[node.name];
                             }
                             return _.merge(n, sourceJSON[node.name]);
